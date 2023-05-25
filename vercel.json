@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "back_end_adoption",
+  "builds": [
+    {
+      "src": "dist/apps/server/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/apps/server/main.js"
+    }
+  ]
+}
