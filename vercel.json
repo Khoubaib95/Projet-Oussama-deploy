@@ -3,14 +3,14 @@
   "name": "back_end_adoption",
   "builds": [
     {
-      "src": "dist/apps/server/main.js",
+      "src": "src/main.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "dist/apps/server/main.js"
+      "src": "api/v1/(.*)",
+      "dest": "src/main.ts"
     }
   ]
 }
