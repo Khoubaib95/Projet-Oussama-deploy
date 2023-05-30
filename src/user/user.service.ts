@@ -1,32 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Auth } from '../auth/entities/auth.entity';
-import { User, UserRole } from '../user/entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Post } from 'src/posts/entities/post.entity';
-import { Comment } from 'src/comments/entities/comment.entity';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>, //@InjectRepository(Post) private readonly postRepository: Repository<Post>, //@InjectRepository(Comment) //private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>, //@InjectRepository(Post) private readonly postRepository: Repository<Post>, //@InjectRepository(Comment) //private readonly userRepository: Repository<User>,
   ) {}
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(user_id: string): Promise<User> {
+    const comment = await this.userRepository.findOne({
+      where: { user_id },
+    });
+    if (!comment) {
+      throw new NotFoundException(`User with ID ${user_id} not found`);
+    }
+    return comment;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(user_id: string, updatePostDto: any) {
+    const comment = await this.userRepository.findOne({
+      where: { user_id },
+    });
+    if (!comment) {
+      throw new NotFoundException(`User with ID ${user_id} not found`); //
+    }
+    Object.assign(comment, updatePostDto);
+    return this.userRepository.save(comment);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(user_id: string): Promise<any> {
+    return await this.userRepository.delete(user_id);
   }
 }

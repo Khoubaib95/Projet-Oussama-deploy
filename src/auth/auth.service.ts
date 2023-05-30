@@ -102,6 +102,8 @@ export class AuthService {
     delete auth.password;
     delete auth.reset_pwd_code;
     delete auth.email_verification_code;
+    delete auth.createdAt;
+
     const token = await this.signToken(
       auth.auth_id,
       user.user_id,

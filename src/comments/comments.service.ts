@@ -18,6 +18,8 @@ export class CommentsService {
     private readonly notificationsRepository: Repository<Notifications>,
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(user_id: string, post_id: string, text: string): Promise<any> {
@@ -28,14 +30,18 @@ export class CommentsService {
     comment.user = { user_id } as User;
     comment.text = text;
     comment.createdAt = new Date();
-    const { user } = await this.postRepository.findOne({
+    const userCreator = await this.userRepository.findOne({
+      where: { user_id },
+      //relations: ['user'],
+    });
+    const postOwner = await this.postRepository.findOne({
       where: { post_id },
       relations: ['user'],
     });
-    //console.log(user);
-    const notitf = await this.createNotif(
-      user_id,
-      `${user.first_name} ${user.last_name} a commenté votre annonce`,
+    console.log(postOwner);
+    await this.createNotif(
+      postOwner.user.user_id,
+      `${userCreator.first_name} ${userCreator.last_name} a commenté votre annonce`,
     );
     return await this.commentRepository.save(comment);
   }

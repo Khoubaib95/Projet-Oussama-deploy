@@ -23,8 +23,11 @@ export class NotificationService {
   }
 
   async findAll(user_id: string) {
-    return await this.notificationsRepository.findOne({
+    console.log('findAll');
+    const notf = await this.notificationsRepository.find({
       where: { user: { user_id } },
     });
+    console.log('notf', notf);
+    return notf;
   }
 }
