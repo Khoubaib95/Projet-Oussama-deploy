@@ -75,7 +75,7 @@ export class PostsController {
     return this.postsService.update(id, updatePostDto);
   }
 
-  @Patch(':id')
+  @Patch('/addmit/:id')
   @UseGuards(OnlyAdminGuard)
   addmitPost(@Param('id') id: string) {
     return this.postsService.addmitPost(id);
