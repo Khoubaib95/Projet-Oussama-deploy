@@ -20,6 +20,6 @@ export class Category {
   })
   posts: Post[];
 
-  @CreateDateColumn(/*{ default: new Date() }*/)
+  @Column({ nullable: true })
   createdAt: Date;
 }

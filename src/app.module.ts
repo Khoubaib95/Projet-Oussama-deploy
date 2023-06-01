@@ -22,11 +22,11 @@ import { Notifications } from './notification/entities/notification.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'sql.freedb.tech',
+      host: 'sql7.freesqldatabase.com',
       port: 3306,
-      username: 'freedb_adoption',
-      password: 'wJfQp$$hcpSJ9P$',
-      database: 'freedb_adoption',
+      username: 'sql7623051',
+      password: 'PluHBzQElp',
+      database: 'sql7623051',
       entities: [
         Auth,
         User,
