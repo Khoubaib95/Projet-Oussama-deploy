@@ -15,7 +15,7 @@ import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { RequestWithUser } from 'src/@types/request-with-user';
 import { AdminGuard } from './admin.guard';
-import { OnlyAdminGuard } from 'src/guards/admin.guard';
+import { OnlyAdminGuard } from '../guards/admin.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('posts')

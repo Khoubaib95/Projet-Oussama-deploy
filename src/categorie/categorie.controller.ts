@@ -12,7 +12,7 @@ import { CategorieService } from './categorie.service';
 //import { CreateCategorieDto } from './dto/create-categorie.dto';
 //import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { OnlyAdminGuard } from 'src/guards/admin.guard';
+import { OnlyAdminGuard } from '../guards/admin.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('categorie')
