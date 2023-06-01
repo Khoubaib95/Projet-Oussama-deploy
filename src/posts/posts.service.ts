@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-//import { CreatePostDto } from './dto/create-post.dto';
-//import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from '../user/entities/user.entity';
 import { Post, Image } from './entities/post.entity';
 import { Category } from 'src/categorie/entities/categorie.entity';
@@ -13,7 +11,7 @@ export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
     @InjectRepository(Image)
-    private readonly imagesRepository: Repository<Image>, //@InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly imagesRepository: Repository<Image>,
   ) {}
 
   async create(
@@ -34,6 +32,7 @@ export class PostsService {
     post.user = { user_id } as User;
     post.gender = gender;
     post.age = age;
+    post.isAddmitted = false;
     post.createdAt = new Date();
 
     const posts = await this.postRepository.save(post);
@@ -58,10 +57,16 @@ export class PostsService {
     return returnPost;
   }
   async findAll(): Promise<Post[]> {
-    return await this.postRepository.find({
+    const posts = await this.postRepository.find({
+      where: { isAddmitted: true },
       relations: ['user', 'images', 'comments'],
     });
+    return posts.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
+
   async findOne(post_id: string): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { post_id },
@@ -71,6 +76,33 @@ export class PostsService {
       throw new NotFoundException(`Post with ID ${post_id} not found`);
     }
     return post;
+  }
+
+  async searchByName(name: string): Promise<Post[]> {
+    const query = this.postRepository
+      .createQueryBuilder('post')
+      .where('post.name LIKE :name', { name: `%${name}%` })
+      .getMany();
+
+    return query;
+  }
+
+  async searchByCategory(cat_id: string): Promise<Post[]> {
+    const query = this.postRepository
+      .createQueryBuilder('post')
+      .where('post.category.cat_id = :cat_id', { cat_id })
+      .getMany();
+
+    return query;
+  }
+
+  async addmitPost(post_id: string) {
+    const post = await this.postRepository.findOne({ where: { post_id } });
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${post_id} not found`);
+    }
+    post.isAddmitted = true;
+    return this.postRepository.save(post);
   }
 
   async update(post_id: string, updatePostDto: any) {

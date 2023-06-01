@@ -15,10 +15,10 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @Post()
+  /* @Post()
   create(@Request() request: RequestWithUser, @Body() data: { text: string }) {
     return this.notificationService.create(request.user.user_id, data.text);
-  }
+  }*/
 
   @Get()
   findOne(@Request() request: RequestWithUser) {

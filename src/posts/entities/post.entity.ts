@@ -27,6 +27,9 @@ export class Post {
   @Column()
   gender: string;
 
+  @Column()
+  isAddmitted: boolean;
+
   @Column({ nullable: true })
   createdAt: Date;
 

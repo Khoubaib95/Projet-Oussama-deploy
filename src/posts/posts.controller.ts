@@ -14,6 +14,8 @@ import { PostsService } from './posts.service';
 //import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { RequestWithUser } from 'src/@types/request-with-user';
+import { AdminGuard } from './admin.guard';
+import { OnlyAdminGuard } from 'src/guards/admin.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('posts')
@@ -45,22 +47,42 @@ export class PostsController {
   }
 
   @Get()
-  findAll(@Request() request: RequestWithUser) {
-    console.log(request);
+  findAll() {
     return this.postsService.findAll();
   }
 
+  @Get('search-by-name/:name')
+  async searchByName(@Param('name') name: string) {
+    const posts = await this.postsService.searchByName(name);
+    return posts;
+  }
+
+  @Get('search-by-category/:id')
+  async searchByCategory(@Param('id') id: string) {
+    const posts = await this.postsService.searchByCategory(id);
+    return posts;
+  }
+
   @Get(':id')
+  @UseGuards(AdminGuard)
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(AdminGuard)
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto);
   }
 
+  @Patch(':id')
+  @UseGuards(OnlyAdminGuard)
+  addmitPost(@Param('id') id: string) {
+    return this.postsService.addmitPost(id);
+  }
+
   @Delete(':id')
+  @UseGuards(AdminGuard)
   remove(@Param('id') id: string) {
     return this.postsService.remove(id);
   }

@@ -12,6 +12,7 @@ import { CategorieService } from './categorie.service';
 //import { CreateCategorieDto } from './dto/create-categorie.dto';
 //import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { OnlyAdminGuard } from 'src/guards/admin.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('categorie')
@@ -19,6 +20,7 @@ export class CategorieController {
   constructor(private readonly categorieService: CategorieService) {}
 
   @Post()
+  @UseGuards(OnlyAdminGuard)
   create(@Body() createCategorieDto: { name: string }) {
     return this.categorieService.create(createCategorieDto.name);
   }
@@ -34,6 +36,7 @@ export class CategorieController {
   }
 
   @Patch(':id')
+  @UseGuards(OnlyAdminGuard)
   update(
     @Param('id') id: string,
     @Body() updateCategorieDto: { name: string },
@@ -42,6 +45,7 @@ export class CategorieController {
   }
 
   @Delete(':id')
+  @UseGuards(OnlyAdminGuard)
   remove(@Param('id') id: string) {
     return this.categorieService.remove(id);
   }

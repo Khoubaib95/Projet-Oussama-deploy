@@ -6,7 +6,7 @@ import { User } from '../user/entities/user.entity';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>, //@InjectRepository(Post) private readonly postRepository: Repository<Post>, //@InjectRepository(Comment) //private readonly userRepository: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -14,24 +14,24 @@ export class UserService {
   }
 
   async findOne(user_id: string): Promise<User> {
-    const comment = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { user_id },
     });
-    if (!comment) {
+    if (!user) {
       throw new NotFoundException(`User with ID ${user_id} not found`);
     }
-    return comment;
+    return user;
   }
 
   async update(user_id: string, updatePostDto: any) {
-    const comment = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { user_id },
     });
-    if (!comment) {
-      throw new NotFoundException(`User with ID ${user_id} not found`); //
+    if (!user) {
+      throw new NotFoundException(`User with ID ${user_id} not found`);
     }
-    Object.assign(comment, updatePostDto);
-    return this.userRepository.save(comment);
+    Object.assign(user, updatePostDto);
+    return this.userRepository.save(user);
   }
 
   async remove(user_id: string): Promise<any> {

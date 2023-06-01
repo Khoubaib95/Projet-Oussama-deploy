@@ -11,23 +11,20 @@ export class NotificationService {
     @InjectRepository(Notifications)
     private readonly notificationsRepository: Repository<Notifications>,
   ) {}
-  async create(user_id: string, text: string): Promise<any> {
+  /*async create(user_id: string, text: string): Promise<any> {
     const notif_id = uuid();
     const notifications = new Notifications();
     notifications.notif_id = notif_id;
     notifications.user = { user_id } as User;
     notifications.text = text;
     notifications.createdAt = new Date();
-
     return await this.notificationsRepository.save(notifications);
-  }
+  }*/
 
   async findAll(user_id: string) {
-    console.log('findAll');
     const notf = await this.notificationsRepository.find({
       where: { user: { user_id } },
     });
-    console.log('notf', notf);
     return notf;
   }
 }

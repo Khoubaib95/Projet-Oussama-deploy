@@ -13,7 +13,7 @@ import { CommentsService } from './comments.service';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/@types/request-with-user';
-//import { AdminGuard } from './categorie-admin-auth.guard';
+import { AdminGuard } from './admin.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('comments')
@@ -47,13 +47,14 @@ export class CommentsController {
   }
 
   @Patch(':id')
+  @UseGuards(AdminGuard)
   update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
     return this.commentsService.update(id, updateCommentDto);
   }
 
   @Delete(':id')
-  //@UseGuards(AdminGuard)
+  @UseGuards(AdminGuard)
   remove(@Param('id') id: string) {
-    return 'ok'; //this.commentsService.remove(id);
+    return this.commentsService.remove(id);
   }
 }

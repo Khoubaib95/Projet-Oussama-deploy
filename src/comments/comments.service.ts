@@ -32,7 +32,6 @@ export class CommentsService {
     comment.createdAt = new Date();
     const userCreator = await this.userRepository.findOne({
       where: { user_id },
-      //relations: ['user'],
     });
     const postOwner = await this.postRepository.findOne({
       where: { post_id },

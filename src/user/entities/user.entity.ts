@@ -35,7 +35,9 @@ export class User {
   @Column({ default: 'USER' })
   role: string;
 
-  @OneToOne(() => Auth)
+  @OneToOne(() => Auth, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'auth_id' })
   auth: Auth;
 
