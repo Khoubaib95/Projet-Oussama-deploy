@@ -54,8 +54,21 @@ export class CommentsService {
       .leftJoinAndSelect('comment.user', 'user')
       .where('comment.post.post_id = :post_id', { post_id })
       .getMany();
+    const commentData: Comment[] = [];
+    try {
+      const comments = await query;
 
-    return query;
+      for (const comment of comments) {
+        commentData.push(comment);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return commentData.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
 
   async findOne(comment_id: string): Promise<Comment> {
