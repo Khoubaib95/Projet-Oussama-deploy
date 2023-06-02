@@ -37,7 +37,6 @@ export class CommentsService {
       where: { post_id },
       relations: ['user'],
     });
-    console.log(postOwner);
     await this.createNotif(
       postOwner.user.user_id,
       `${userCreator.first_name} ${userCreator.last_name} a commenté votre annonce`,
@@ -47,6 +46,16 @@ export class CommentsService {
 
   async findAll(): Promise<Comment[]> {
     return await this.commentRepository.find();
+  }
+
+  async findCommentsByPostId(post_id: string): Promise<Comment[]> {
+    const query = this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .where('comment.post.post_id = :post_id', { post_id })
+      .getMany();
+
+    return query;
   }
 
   async findOne(comment_id: string): Promise<Comment> {

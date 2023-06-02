@@ -46,6 +46,12 @@ export class CommentsController {
     return this.commentsService.findOne(id);
   }
 
+  @Get('/post/:id')
+  async findCommentsByPostId(@Param('id') id: string) {
+    const comments = await this.commentsService.findCommentsByPostId(id);
+    return comments;
+  }
+
   @Patch(':id')
   @UseGuards(AdminGuard)
   update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
