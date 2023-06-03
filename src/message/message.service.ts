@@ -92,23 +92,17 @@ export class MessageService {
         user: In([user.user_id, toUser.user_id]),
         to: In([user.user_id, toUser.user_id]),
       },
+      relations: ['to'],
     });
-    console.log(messages);
     const formattedMessages = messages.map((message) => ({
       messageId: message.message_id,
       text: message.text,
       createdAt: message.createdAt,
-      /*user: {
-        userId: message.user.user_id,
-        firstName: message.user.first_name,
-        lastName: message.user.last_name,
-      },*/
-      /*to: {
-        userId: message.to.user_id,
-        firstName: message.to.first_name,
-        lastName: message.to.last_name,
-      },*/
-      to: message.to.user_id,
+      to: {
+        user_id: message.to.user_id,
+        first_name: message.to.first_name,
+        last_name: message.to.last_name,
+      },
     }));
 
     return formattedMessages;
