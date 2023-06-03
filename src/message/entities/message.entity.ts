@@ -12,8 +12,9 @@ export class Message {
   @PrimaryGeneratedColumn('uuid')
   message_id: string;
 
-  @Column('uuid')
-  to: string;
+  @ManyToOne(() => User, (user) => user.messages)
+  @JoinColumn({ name: 'to' })
+  to: User;
 
   @Column()
   text: string;

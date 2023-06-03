@@ -16,7 +16,7 @@ export class MessageService {
     const message = new Message();
     message.message_id = message_id;
     message.user = { user_id } as User;
-    message.to = to;
+    message.to = { user_id } as User;
     message.text = text;
     message.createdAt = new Date();
 
@@ -29,8 +29,12 @@ export class MessageService {
   }*/
   async find(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
+    const toUser = { user_id: to } as User;
     const messages = await this.messageRepository.find({
-      where: { user: In([user.user_id, to]), to: In([user.user_id, to]) },
+      where: {
+        user: In([user.user_id, toUser.user_id]),
+        to: In([user.user_id, toUser.user_id]),
+      },
     });
     return messages.sort(
       (a: any, b: any) =>
