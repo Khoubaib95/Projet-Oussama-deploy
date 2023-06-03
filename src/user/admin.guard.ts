@@ -20,13 +20,7 @@ export class AdminGuard implements CanActivate {
 
     try {
       const { params, user } = request;
-      const u = await this.repository.findOne({
-        where: { user_id: params.id },
-      });
-      if (!u) {
-        return true;
-      }
-      if (user.user_id === u.user_id) {
+      if (user.user_id === params.id) {
         return true;
       }
       if (user.role === 'ADMIN') {
