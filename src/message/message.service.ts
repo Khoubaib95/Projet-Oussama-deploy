@@ -105,7 +105,10 @@ export class MessageService {
       },
     }));
 
-    return formattedMessages;
+    return formattedMessages.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
 
   /* async update(post_id: string, updatePostDto: any) {
