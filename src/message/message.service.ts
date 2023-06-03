@@ -95,7 +95,7 @@ export class MessageService {
       relations: ['to'],
     });
     const formattedMessages = messages.map((message) => ({
-      messageId: message.message_id,
+      message_id: message.message_id,
       text: message.text,
       createdAt: message.createdAt,
       to: {
