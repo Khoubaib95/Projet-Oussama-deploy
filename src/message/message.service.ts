@@ -46,7 +46,6 @@ export class MessageService {
   async find(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
     const toUser = { user_id: to } as User;
-
     const messages = await this.messageRepository
       .createQueryBuilder('message')
       .leftJoinAndSelect('message.to', 'toUser')
@@ -58,6 +57,7 @@ export class MessageService {
         userId: user.user_id,
         toUserId: toUser.user_id,
       })
+      .leftJoinAndSelect('message.user', 'fromUser')
       .orderBy('message.createdAt', 'ASC')
       .getMany();
 
