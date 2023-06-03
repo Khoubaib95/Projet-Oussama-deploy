@@ -27,19 +27,60 @@ export class MessageService {
       relations: ['user', 'images', 'comments'],
     });
   }*/
-  async find(user_id: string, to: string): Promise<any> {
+  async finds(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
     const toUser = { user_id: to } as User;
     const messages = await this.messageRepository.find({
-      where: {
+      /* where: {
         user: In([user.user_id, toUser.user_id]),
         to: In([user.user_id, toUser.user_id]),
-      },
+      },*/
     });
+    console.log(messages);
     return messages.sort(
       (a: any, b: any) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
+  }
+
+  async find(user_id: string, to: string): Promise<any> {
+    const user = { user_id } as User;
+    const toUser = { user_id: to } as User;
+
+    const messages = await this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.to', 'toUser')
+      .where('(message.user_id = :userId OR message.user_id = :toUserId)', {
+        userId: user.user_id,
+        toUserId: toUser.user_id,
+      })
+      .orWhere('(message.to = :userId OR message.to = :toUserId)', {
+        userId: user.user_id,
+        toUserId: toUser.user_id,
+      })
+      .orderBy('message.createdAt', 'ASC')
+      .getMany();
+
+    // Map the retrieved messages to include the toUser's first name and last name
+    console.log(messages);
+    const formattedMessages = messages.map((message) => ({
+      messageId: message.message_id,
+      text: message.text,
+      createdAt: message.createdAt,
+      /*user: {
+        userId: message.user.user_id,
+        firstName: message.user.first_name,
+        lastName: message.user.last_name,
+      },*/
+      /*to: {
+        userId: message.to.user_id,
+        firstName: message.to.first_name,
+        lastName: message.to.last_name,
+      },*/
+      to: message.to.user_id,
+    }));
+
+    return formattedMessages;
   }
 
   /* async update(post_id: string, updatePostDto: any) {
