@@ -20,9 +20,7 @@ export class AdminGuard implements CanActivate {
 
     try {
       const { params, user } = request;
-      console.log('blaaaaa', user.user_id, '   ', params.id);
       if (user.user_id === params.id) {
-        //console.log('blaaaaa');
         return true;
       }
       if (user.role === 'ADMIN') {
