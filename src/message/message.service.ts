@@ -22,11 +22,6 @@ export class MessageService {
 
     return await this.messageRepository.save(message);
   }
-  /*async findAll(): Promise<Post[]> {
-    return await this.postRepository.find({
-      relations: ['user', 'images', 'comments'],
-    });
-  }*/
   async finds(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
     const toUser = { user_id: to } as User;
@@ -43,10 +38,38 @@ export class MessageService {
     );
   }
 
+  async findconversations(user_id: string): Promise<any[]> {
+    const conversations = await this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.user', 'user')
+      .leftJoinAndSelect('message.to', 'toUser')
+      .where('message.user_id = :userId OR message.to.user_id = :userId', {
+        userId: user_id,
+      })
+      .groupBy('toUser.user_id')
+      .orderBy('message.createdAt', 'DESC')
+      .getMany();
+
+    const formattedConversations = conversations.map((conversation) => ({
+      lastMessage: {
+        messageId: conversation.message_id,
+        text: conversation.text,
+        createdAt: conversation.createdAt,
+      },
+      toUser: {
+        userId: conversation.to.user_id,
+        firstName: conversation.to.first_name,
+        lastName: conversation.to.last_name,
+      },
+    }));
+
+    return formattedConversations;
+  }
+
   async find(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
     const toUser = { user_id: to } as User;
-    const messages = await this.messageRepository
+    /*const messages = await this.messageRepository
       .createQueryBuilder('message')
       .leftJoinAndSelect('message.to', 'toUser')
       .where('(message.user_id = :userId OR message.user_id = :toUserId)', {
@@ -60,8 +83,16 @@ export class MessageService {
       .leftJoinAndSelect('message.user', 'fromUser')
       .orderBy('message.createdAt', 'ASC')
       .getMany();
+*/
 
     // Map the retrieved messages to include the toUser's first name and last name
+    //console.log(messages);
+    const messages = await this.messageRepository.find({
+      where: {
+        user: In([user.user_id, toUser.user_id]),
+        to: In([user.user_id, toUser.user_id]),
+      },
+    });
     console.log(messages);
     const formattedMessages = messages.map((message) => ({
       messageId: message.message_id,

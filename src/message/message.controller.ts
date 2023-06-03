@@ -29,9 +29,15 @@ export class MessageController {
     return this.messageService.create(request.user.user_id, data.to, data.text);
   }
 
-  @Get(':id')
+  @Get('conversations/:id')
   find(@Request() request: RequestWithUser, @Param('id') id: string) {
     return this.messageService.find(request.user.user_id, id);
+  }
+
+  @Get('last-conversations')
+  findconversations(@Request() request: RequestWithUser) {
+    console.log('findconversations');
+    return this.messageService.findconversations(request.user.user_id);
   }
 
   @Delete(':id')
