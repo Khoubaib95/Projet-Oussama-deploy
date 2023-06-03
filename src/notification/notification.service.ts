@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notifications } from './entities/notification.entity';
-import { v4 as uuid } from 'uuid';
-import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class NotificationService {
@@ -25,6 +23,9 @@ export class NotificationService {
     const notf = await this.notificationsRepository.find({
       where: { user: { user_id } },
     });
-    return notf;
+    return notf.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
 }

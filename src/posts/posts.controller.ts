@@ -50,6 +50,12 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
+  @Get('my-post')
+  async myPost(@Request() request: RequestWithUser) {
+    const posts = await this.postsService.myPost(request.user.user_id);
+    return posts;
+  }
+
   @Get('search-by-name/:name')
   async searchByName(@Param('name') name: string) {
     const posts = await this.postsService.searchByName(name);

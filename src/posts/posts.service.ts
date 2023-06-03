@@ -78,6 +78,13 @@ export class PostsService {
     return post;
   }
 
+  async myPost(user_id: string): Promise<Post[]> {
+    const post = await this.postRepository.find({
+      where: { user: { user_id } },
+      relations: ['images', 'comments'],
+    });
+    return post;
+  }
   async searchByName(name: string): Promise<Post[]> {
     const query = this.postRepository
       .createQueryBuilder('post')
