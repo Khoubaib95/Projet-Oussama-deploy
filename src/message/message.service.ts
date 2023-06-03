@@ -86,7 +86,7 @@ export class MessageService {
 */
 
     // Map the retrieved messages to include the toUser's first name and last name
-    //console.log(messages);
+    //console.log(messages)
     const messages = await this.messageRepository.find({
       where: {
         user: In([user.user_id, toUser.user_id]),
