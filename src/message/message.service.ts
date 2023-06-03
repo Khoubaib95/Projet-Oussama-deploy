@@ -16,7 +16,7 @@ export class MessageService {
     const message = new Message();
     message.message_id = message_id;
     message.user = { user_id } as User;
-    message.to = { user_id } as User;
+    message.to = { user_id: to } as User;
     message.text = text;
     message.createdAt = new Date();
 
