@@ -42,7 +42,7 @@ export class MessageService {
 
   async findconversations(user_id: string): Promise<any[]> {
     const users = await this.userRepository.find({
-      select: ['auth_id', 'first_name', 'last_name', 'phone_number'],
+      select: ['user_id', 'first_name', 'last_name', 'phone_number'],
       where: {
         user_id: Not(user_id),
       },
