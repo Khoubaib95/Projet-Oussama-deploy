@@ -22,71 +22,60 @@ export class MessageService {
 
     return await this.messageRepository.save(message);
   }
-  async finds(user_id: string, to: string): Promise<any> {
+  /*async finds(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
     const toUser = { user_id: to } as User;
     const messages = await this.messageRepository.find({
       /* where: {
         user: In([user.user_id, toUser.user_id]),
         to: In([user.user_id, toUser.user_id]),
-      },*/
+      },
     });
     console.log(messages);
     return messages.sort(
       (a: any, b: any) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
-  }
+  }*/
 
   async findconversations(user_id: string): Promise<any[]> {
-    const conversations = await this.messageRepository
-      .createQueryBuilder('message')
-      .leftJoinAndSelect('message.user', 'user')
-      .leftJoinAndSelect('message.to', 'toUser')
-      .where('message.user_id = :userId OR message.to.user_id = :userId', {
-        userId: user_id,
-      })
-      .groupBy('toUser.user_id')
-      .orderBy('message.createdAt', 'DESC')
-      .getMany();
+    const conversations = await this.messageRepository.find({
+      where: { user: { user_id } },
+      relations: ['user', 'to'],
+    });
+    const sortedData = conversations.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
-    const formattedConversations = conversations.map((conversation) => ({
-      lastMessage: {
-        messageId: conversation.message_id,
-        text: conversation.text,
-        createdAt: conversation.createdAt,
-      },
-      toUser: {
-        userId: conversation.to.user_id,
-        firstName: conversation.to.first_name,
-        lastName: conversation.to.last_name,
-      },
-    }));
-
-    return formattedConversations;
+    const results = sortedData.reduce((acc, obj) => {
+      const { user_id } = obj.to;
+      if (!acc[user_id]) {
+        acc[user_id] = [];
+      }
+      acc[user_id].push({
+        message_id: obj.message_id,
+        createdAt: obj.createdAt,
+        text: obj.text,
+        user_id: obj.user.user_id,
+        to: {
+          user_id: obj.to.user_id,
+          first_name: obj.to.first_name,
+          last_name: obj.to.last_name,
+        },
+      });
+      return acc;
+    }, {});
+    const re = [];
+    for (const key in results) {
+      re.push(results[key][0]);
+    }
+    return re;
   }
 
   async find(user_id: string, to: string): Promise<any> {
     const user = { user_id } as User;
     const toUser = { user_id: to } as User;
-    /*const messages = await this.messageRepository
-      .createQueryBuilder('message')
-      .leftJoinAndSelect('message.to', 'toUser')
-      .where('(message.user_id = :userId OR message.user_id = :toUserId)', {
-        userId: user.user_id,
-        toUserId: toUser.user_id,
-      })
-      .orWhere('(message.to = :userId OR message.to = :toUserId)', {
-        userId: user.user_id,
-        toUserId: toUser.user_id,
-      })
-      .leftJoinAndSelect('message.user', 'fromUser')
-      .orderBy('message.createdAt', 'ASC')
-      .getMany();
-*/
-
-    // Map the retrieved messages to include the toUser's first name and last name
-    //console.log(messages)
     const messages = await this.messageRepository.find({
       where: {
         user: In([user.user_id, toUser.user_id]),
@@ -110,15 +99,6 @@ export class MessageService {
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
   }
-
-  /* async update(post_id: string, updatePostDto: any) {
-    const post = await this.messageRepository.findOne({ where: { post_id } });
-    if (!post) {
-      throw new NotFoundException(`Post with ID ${post_id} not found`);
-    }
-    Object.assign(post, updatePostDto);
-    return this.messageRepository.save(post);
-  }*/
 
   async remove(message_id: string): Promise<any> {
     return await this.messageRepository.delete(message_id);
