@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Not } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { Message } from './entities/message.entity';
 import { v4 as uuid } from 'uuid';
 
 export class MessageService {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
   ) {}
@@ -39,11 +41,13 @@ export class MessageService {
   }*/
 
   async findconversations(user_id: string): Promise<any[]> {
-    const conversations = await this.messageRepository.find({
-      where: { user: { user_id } },
-      relations: ['user', 'to'],
+    const users = await this.userRepository.find({
+      select: ['auth_id', 'first_name', 'last_name', 'phone_number'],
+      where: {
+        user_id: Not(user_id),
+      },
     });
-    const sortedData = conversations.sort(
+    /*   const sortedData = conversations.sort(
       (a: any, b: any) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
@@ -69,8 +73,8 @@ export class MessageService {
     const re = [];
     for (const key in results) {
       re.push(results[key][0]);
-    }
-    return re;
+    }*/
+    return users;
   }
 
   async find(user_id: string, to: string): Promise<any> {

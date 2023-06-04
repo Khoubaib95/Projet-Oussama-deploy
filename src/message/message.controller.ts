@@ -36,7 +36,6 @@ export class MessageController {
 
   @Get('last-conversations')
   findconversations(@Request() request: RequestWithUser) {
-    console.log('findconversations');
     return this.messageService.findconversations(request.user.user_id);
   }
 
