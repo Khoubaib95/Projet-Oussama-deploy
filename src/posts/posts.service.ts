@@ -85,6 +85,7 @@ export class PostsService {
     });
     return post;
   }
+
   async searchByName(name: string): Promise<Post[]> {
     const query = this.postRepository
       .createQueryBuilder('post')
