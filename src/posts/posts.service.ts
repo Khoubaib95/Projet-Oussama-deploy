@@ -86,22 +86,22 @@ export class PostsService {
     return post;
   }
 
-  async searchByName(name: string): Promise<Post[]> {
+  /*async searchByName(name: string): Promise<Post[]> {
     const query = this.postRepository
       .createQueryBuilder('post')
       .where('post.name LIKE :name', { name: `%${name}%` })
       .getMany();
 
     return query;
-  }
+  }*/
 
   async searchByCategory(cat_id: string): Promise<Post[]> {
-    const query = this.postRepository
-      .createQueryBuilder('post')
-      .where('post.category.cat_id = :cat_id', { cat_id })
-      .getMany();
+    const post = await this.postRepository.find({
+      where: { category: { cat_id }, isAddmitted: true },
+      relations: ['user', 'images', 'comments'],
+    });
 
-    return query;
+    return post;
   }
 
   async addmitPost(post_id: string) {

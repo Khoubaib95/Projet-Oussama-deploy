@@ -56,11 +56,11 @@ export class PostsController {
     return posts;
   }
 
-  @Get('search-by-name/:name')
+  /*@Get('search-by-name/:name')
   async searchByName(@Param('name') name: string) {
     const posts = await this.postsService.searchByName(name);
     return posts;
-  }
+  }*/
 
   @Get('search-by-category/:id')
   async searchByCategory(@Param('id') id: string) {
