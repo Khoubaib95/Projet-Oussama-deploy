@@ -50,17 +50,16 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
+  @Get('admin-get-all')
+  adminFindAll() {
+    return this.postsService.adminFindAll();
+  }
+
   @Get('my-post')
   async myPost(@Request() request: RequestWithUser) {
     const posts = await this.postsService.myPost(request.user.user_id);
     return posts;
   }
-
-  /*@Get('search-by-name/:name')
-  async searchByName(@Param('name') name: string) {
-    const posts = await this.postsService.searchByName(name);
-    return posts;
-  }*/
 
   @Get('search-by-category/:id')
   async searchByCategory(@Param('id') id: string) {
@@ -82,8 +81,11 @@ export class PostsController {
 
   @Patch('addmit/:id')
   @UseGuards(OnlyAdminGuard)
-  addmitPost(@Param('id') id: string) {
-    return this.postsService.addmitPost(id);
+  addmitPost(
+    @Param('id') id: string,
+    @Body() { isAddmitted }: { isAddmitted: boolean },
+  ) {
+    return this.postsService.addmitPost(id, isAddmitted);
   }
 
   @Delete(':id')

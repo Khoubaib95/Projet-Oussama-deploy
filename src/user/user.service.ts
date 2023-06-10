@@ -10,7 +10,7 @@ export class UserService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ relations: ['auth'] });
   }
 
   async findOne(user_id: string): Promise<User> {

@@ -112,6 +112,40 @@ export class AuthService {
     );
     return { ...auth, ...user, token };
   }
+
+  async signInAdmin(email: string, password: string): Promise<any> {
+    const auth = await this.authRepository.findOne({
+      where: { email },
+    });
+
+    if (!auth) {
+      throw new BadRequestException('WRONG_EMAIL');
+    }
+    const user = await this.userRepository.findOne({
+      where: { user_id: auth.user_id },
+    });
+
+    if (user.role != 'ADMIN') {
+      throw new BadRequestException('NOT_ADMIN');
+    }
+    const compareSuccess = await this.comparePasswords(auth.password, password);
+    if (!compareSuccess) {
+      throw new BadRequestException('WRONG_PASS');
+    }
+
+    delete auth.password;
+    delete auth.reset_pwd_code;
+    delete auth.email_verification_code;
+    delete auth.createdAt;
+
+    const token = await this.signToken(
+      auth.auth_id,
+      user.user_id,
+      auth.email,
+      user.role,
+    );
+    return { ...auth, ...user, token };
+  }
   /*
   async update(
     email: string,

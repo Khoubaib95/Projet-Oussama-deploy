@@ -38,6 +38,14 @@ export class AuthController {
 
     return await this.authService.signIn(email, password);
   }
+
+  @Post('admin-signin')
+  async signInAdmin(@Body() signInDto: any) {
+    const { email, password } = signInDto;
+
+    return await this.authService.signInAdmin(email, password);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('verify-email')
   async verifyEmail(

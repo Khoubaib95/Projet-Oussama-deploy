@@ -67,6 +67,16 @@ export class PostsService {
     );
   }
 
+  async adminFindAll(): Promise<Post[]> {
+    const posts = await this.postRepository.find({
+      relations: ['user', 'images'],
+    });
+    return posts.sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
   async findOne(post_id: string): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { post_id },
@@ -104,12 +114,12 @@ export class PostsService {
     return post;
   }
 
-  async addmitPost(post_id: string) {
+  async addmitPost(post_id: string, isAddmitted: boolean) {
     const post = await this.postRepository.findOne({ where: { post_id } });
     if (!post) {
       throw new NotFoundException(`Post with ID ${post_id} not found`);
     }
-    post.isAddmitted = true;
+    post.isAddmitted = isAddmitted;
     return this.postRepository.save(post);
   }
 
